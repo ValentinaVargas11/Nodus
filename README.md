@@ -158,10 +158,6 @@ Visualización rápida del estado general del edificio con gráficos y estadíst
 - El diseño es **responsive** y se adapta a diferentes tamaños de pantalla
 - Los cambios se guardan en memoria (se pierden al recargar)
 
-## 📞 Soporte
-
-Para reportar problemas o sugerir mejoras, contacta al equipo de desarrollo.
-
 ---
 
 **Última actualización**: Junio 2026
