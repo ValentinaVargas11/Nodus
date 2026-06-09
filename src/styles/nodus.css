@@ -9,7 +9,7 @@
 /* ── Variables ─────────────────────────────────────────────── */
 :root {
   /* Sidebar */
-  --sidebar-bg: #080e1a;
+  --sidebar-bg: #000f2d;
   --sidebar-width: 240px;
   --sidebar-collapsed: 68px;
   --sidebar-border: #141e30;
@@ -1069,7 +1069,7 @@ body {
 /* ── Sidebar v3 ─────────────────────────────────────────────── */
 .sidebar {
   width: 240px;
-  background: #080e1a;
+  background: #000f2d;
   border-right: 1px solid rgba(255,255,255,0.07);
   display: flex;
   flex-direction: column;
