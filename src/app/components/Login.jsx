@@ -32,7 +32,7 @@ export default function Login({ onLogin }) {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #080e1a 0%, #0f1c35 50%, #0d1a30 100%)',
+      background: 'linear-gradient(135deg, rgb(8, 14, 26) 0%, rgb(47 71 123) 50%, rgb(13, 26, 48) 100%)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: '20px', fontFamily: "'DM Sans', system-ui, sans-serif",
     }}>
