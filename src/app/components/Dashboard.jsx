@@ -7,7 +7,7 @@ import {
 const formatCurrency = (value) =>
   new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(value);
 
-const COLORS_PIE = ['#4f6ef7', '#16a34a', '#d97706', '#dc2626'];
+const COLORS_PIE = ['#4B5263', '#16a34a', '#d97706', '#dc2626'];
 
 export default function Dashboard({ stats }) {
   const monthlyData = [
@@ -27,7 +27,7 @@ export default function Dashboard({ stats }) {
   ];
 
   const statCards = [
-    { label: 'Unidades Totales',  value: stats.totalRooms,  icon: Building2,     bg: '#eef1fe', color: '#4f6ef7' },
+    { label: 'Unidades Totales',  value: stats.totalRooms,  icon: Building2,     bg: '#f0f1f4', color: '#4B5263' },
     { label: 'Ocupadas',          value: stats.occupied,    icon: DoorOpen,      bg: '#dcfce7', color: '#16a34a' },
     { label: 'Disponibles',       value: stats.available,   icon: Building2,     bg: '#d1fae5', color: '#059669' },
     { label: 'En Limpieza',       value: stats.cleaning,    icon: ClipboardCheck,bg: '#fef3c7', color: '#d97706' },
@@ -55,11 +55,11 @@ export default function Dashboard({ stats }) {
             </div>
           </div>
           <div className="kpi-card">
-            <div className="kpi-icon-wrap" style={{ background: '#eef1fe' }}>
-              <DollarSign size={22} color="#4f6ef7" />
+            <div className="kpi-icon-wrap" style={{ background: '#f0f1f4' }}>
+              <DollarSign size={22} color="#4B5263" />
             </div>
             <div>
-              <div className="kpi-value" style={{ color: '#4f6ef7', fontSize: '20px' }}>
+              <div className="kpi-value" style={{ color: '#4B5263', fontSize: '20px' }}>
                 {formatCurrency(stats.totalFees)}
               </div>
               <div className="kpi-label">Ingresos del mes</div>
@@ -103,7 +103,7 @@ export default function Dashboard({ stats }) {
                     contentStyle={{ borderRadius: 8, border: '1px solid #e2e6f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', fontFamily: 'DM Sans' }}
                     cursor={{ fill: 'rgba(79,110,247,0.05)' }}
                   />
-                  <Bar dataKey="ocupadas" fill="#4f6ef7" name="Unidades Ocupadas" radius={[4,4,0,0]} />
+                  <Bar dataKey="ocupadas" fill="#4B5263" name="Unidades Ocupadas" radius={[4,4,0,0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
