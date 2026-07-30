@@ -1,0 +1,8 @@
+.kpiGreen { background: #dcfce7 }
+.kpiGreenValue { color: #16a34a }
+.kpiGray { background: #f0f1f4 }
+.kpiGrayValue { color: #4B5263; font-size: 20px }
+
+.statIcon {
+  background: var(--stat-icon-bg);
+}

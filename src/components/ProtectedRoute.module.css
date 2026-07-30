@@ -1,0 +1,43 @@
+.loadingWrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+}
+
+.loadingContent {
+  text-align: center;
+}
+
+.loadingText {
+  margin-top: 12px;
+  color: #4b5a72;
+  font-size: 14px;
+}
+
+.deniedWrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  padding: 20px;
+}
+
+.deniedContent {
+  text-align: center;
+}
+
+.deniedTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0d1829;
+  margin: 0 0 8px 0;
+}
+
+.deniedMessage {
+  color: #4b5a72;
+  font-size: 14px;
+  margin: 0;
+}

@@ -1,0 +1,47 @@
+.modalBox { max-width: 400px; padding: 0; overflow: hidden; }
+
+.body { padding: 24px 24px 16px; text-align: center; }
+
+.iconCircle {
+  width: 48px; height: 48px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.title {
+  font-size: 17px; font-weight: 700; color: #0d1829;
+  margin: 0 0 8px; letter-spacing: -0.2px;
+}
+
+.message { font-size: 14px; color: #4b5a72; margin: 0; line-height: 1.5; }
+
+.actions { display: flex; gap: 8px; padding: 12px 24px 20px; }
+
+.cancelBtn { flex: 1; }
+
+.confirmBtn {
+  flex: 1; padding: 9px 16px; color: white; border: none;
+  border-radius: 8px; font-size: 13.5px; font-weight: 600;
+  font-family: inherit; cursor: pointer; transition: all 140ms ease;
+}
+
+.confirmBtn:disabled { background: #9ca3af !important; cursor: not-allowed; }
+
+.confirmBtn:hover:not(:disabled) { background: var(--confirm-hover) !important; }
+
+.progressBar {
+  height: 3px; background: #e5e7eb;
+  border-radius: 0 0 14px 14px; overflow: hidden;
+}
+
+.progressFill {
+  height: 100%; width: 30%;
+  border-radius: 0 0 0 14px;
+  animation: confirmLoading 1s ease-in-out infinite;
+}
+
+@keyframes confirmLoading {
+  0%   { width: 0%; margin-left: 0; }
+  50%  { width: 60%; margin-left: 40%; }
+  100% { width: 0%; margin-left: 100%; }
+}

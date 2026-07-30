@@ -1,0 +1,60 @@
+.roomTag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.priorityDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.statusLabel {
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.taskTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+}
+
+.taskDesc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 8px 0;
+}
+
+.taskMeta {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.metaStrong {
+  color: var(--text-secondary);
+}
+
+.emptyTitle {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.emptyText {
+  font-size: 13px;
+}
+
+.formModal {
+  max-width: 480px;
+}
+
+.textareaInput {
+  resize: vertical;
+}

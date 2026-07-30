@@ -1,0 +1,59 @@
+.headerIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sectionTitle {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tenantBox {
+  background: var(--accent-soft);
+  border: 1px solid #c7d2fe;
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.infoValue {
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.infoText {
+  font-size: 13.5px;
+}
+
+.infoSmall {
+  font-size: 13px;
+}
+
+.detailTitle {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.detailItem {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.detailLabel {
+  margin-bottom: 4px;
+}
+
+.detailValue {
+  font-weight: 600;
+  font-size: 13.5px;
+}
