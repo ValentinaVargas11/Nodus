@@ -4,18 +4,10 @@ import * as authService from '../services/authService';
 
 const AuthContext = createContext(null);
 
-const DEMO_USERS = [
-  { id: 'demo-1', email: 'admin@nodus.com',      nombre: 'Carlos',   apellido: 'Méndez',    cargo: 'Administrador General' },
-  { id: 'demo-2', email: 'backoffice@nodus.com', nombre: 'Laura',    apellido: 'Fernández', cargo: 'Backoffice'            },
-  { id: 'demo-3', email: 'limpieza@nodus.com',   nombre: 'Roberto',  apellido: 'Suárez',    cargo: 'Limpieza'              },
-  { id: 'demo-4', email: 'encargado@nodus.com',  nombre: 'Patricia', apellido: 'Torres',    cargo: 'Encargada de Edificio' },
-];
-
 const initialState = {
   user: null,
   loading: true,
   error: null,
-  isDemo: false,
 };
 
 function authReducer(state, action) {
@@ -23,11 +15,9 @@ function authReducer(state, action) {
     case 'AUTH_LOADING':
       return { ...state, loading: true, error: null };
     case 'AUTH_LOGIN':
-      return { user: action.payload, loading: false, error: null, isDemo: false };
-    case 'AUTH_DEMO_LOGIN':
-      return { user: action.payload, loading: false, error: null, isDemo: true };
+      return { user: action.payload, loading: false, error: null };
     case 'AUTH_LOGOUT':
-      return { user: null, loading: false, error: null, isDemo: false };
+      return { user: null, loading: false, error: null };
     case 'AUTH_ERROR':
       return { ...state, loading: false, error: action.payload };
     default:
@@ -39,11 +29,6 @@ export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
-    const demoUser = localStorage.getItem('demoUser');
-    if (demoUser) {
-      dispatch({ type: 'AUTH_DEMO_LOGIN', payload: JSON.parse(demoUser) });
-      return;
-    }
     restaurarSesion();
   }, []);
 
@@ -66,17 +51,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  function loginDemo(email) {
-    const user = DEMO_USERS.find(u => u.email === email);
-    if (!user) {
-      dispatch({ type: 'AUTH_ERROR', payload: 'Usuario demo no encontrado' });
-      return null;
-    }
-    localStorage.setItem('demoUser', JSON.stringify(user));
-    dispatch({ type: 'AUTH_DEMO_LOGIN', payload: user });
-    return user;
-  }
-
   async function login(email, password) {
     dispatch({ type: 'AUTH_LOADING' });
     try {
@@ -88,7 +62,7 @@ export function AuthProvider({ children }) {
     } catch (err) {
       const mensaje = err.response?.data?.message || 'Error al iniciar sesión';
       dispatch({ type: 'AUTH_ERROR', payload: mensaje });
-      throw err;
+      return null;
     }
   }
 
@@ -99,17 +73,15 @@ export function AuthProvider({ children }) {
         await authService.logout(refreshToken);
       }
     } catch {
-      // si el logout en backend falla, igual limpiamos local
     } finally {
       localStorage.removeItem('refreshToken');
-      localStorage.removeItem('demoUser');
       clearAccessToken();
       dispatch({ type: 'AUTH_LOGOUT' });
     }
   }
 
   return (
-    <AuthContext.Provider value={{ ...state, login, loginDemo, logout, DEMO_USERS }}>
+    <AuthContext.Provider value={{ ...state, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
