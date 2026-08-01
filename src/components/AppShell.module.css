@@ -1,0 +1,10 @@
+.logoImg {
+  height: 58px;
+  width: auto;
+  mix-blend-mode: screen;
+  flex-shrink: 0;
+}
+
+.notifBtn {
+  position: relative;
+}

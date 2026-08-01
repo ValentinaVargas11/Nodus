@@ -1,0 +1,76 @@
+.kpiCompact {
+  padding: 12px 16px;
+}
+
+.kpiIconSmall {
+  width: 36px; height: 36px; background: var(--surface-2);
+}
+
+.kpiIconDanger {
+  width: 36px; height: 36px; background: var(--danger-soft);
+}
+
+.kpiValueDanger { color: var(--danger); }
+
+.kpiValueSmall {
+  font-size: 20px;
+}
+
+.alertIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.alertTitle {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.alertList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.alertItem {
+  font-size: 13px;
+}
+
+.catIcon {
+  font-size: 16px;
+}
+
+.itemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemName {
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.itemMeta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.stockValue {
+  color: var(--stock-color, var(--text-primary));
+}
+
+.progressSmall {
+  width: 120px;
+}
+
+.quantityDisplay {
+  min-width: 44px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 16px;
+  font-family: var(--font-mono);
+}
