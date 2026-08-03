@@ -15,8 +15,8 @@ export const cambiarEstado = async (id, status) => {
   return data.data;
 };
 
-export const asignarInquilino = async (id, datos) => {
-  const { data } = await api.patch(`/rooms/${id}/assign`, datos);
+export const actualizar = async (id, datos) => {
+  const { data } = await api.put(`/rooms/${id}`, datos);
   return data.data;
 };
 

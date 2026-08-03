@@ -103,11 +103,20 @@ function RoomsSection() {
 
   const handleStatusChange = async (roomId, newStatus) => {
     try {
-      await roomService.cambiarEstado(roomId, newStatus);
-      setRooms(rooms.map(r => r.id === roomId ? { ...r, status: newStatus } : r));
-      setSelectedRoom(null);
+      const updated = await roomService.cambiarEstado(roomId, newStatus);
+      setRooms(rooms.map(r => r.id === roomId ? updated : r));
+      setSelectedRoom(updated);
       toast.success('Estado actualizado');
     } catch { toast.error('Error al actualizar estado'); }
+  };
+
+  const handleUpdateRoom = async (roomId, updates) => {
+    try {
+      const updated = await roomService.actualizar(roomId, updates);
+      setRooms(rooms.map(r => r.id === roomId ? updated : r));
+      setSelectedRoom(updated);
+      toast.success('Unidad actualizada');
+    } catch { toast.error('Error al actualizar la unidad'); }
   };
 
   if (loading || !rooms) return <div className="page-content"><div className="spinner" style={{ margin: '60px auto' }} /></div>;
@@ -115,7 +124,8 @@ function RoomsSection() {
   return (
     <>
       <RoomGrid rooms={rooms} onRoomClick={setSelectedRoom} />
-      <RoomDetailModal room={selectedRoom} onClose={() => setSelectedRoom(null)} onChangeStatus={handleStatusChange} />
+      <RoomDetailModal room={selectedRoom} onClose={() => setSelectedRoom(null)}
+        onChangeStatus={handleStatusChange} onUpdateRoom={handleUpdateRoom} />
     </>
   );
 }
