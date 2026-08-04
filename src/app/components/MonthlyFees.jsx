@@ -66,6 +66,7 @@ export default function MonthlyFees({ fees, rooms = [], onUpdateStatus, onUpdate
   const [showForm, setShowForm] = useState(false);
   const [showGenerar, setShowGenerar] = useState(false);
   const [generarMonth, setGenerarMonth] = useState('');
+  const [generarDueDate, setGenerarDueDate] = useState('');
   const [editingFee, setEditingFee] = useState(null);
   const [createForm, setCreateForm] = useState(emptyCreateForm);
 
@@ -144,9 +145,10 @@ export default function MonthlyFees({ fees, rooms = [], onUpdateStatus, onUpdate
 
   const handleGenerarSubmit = (e) => {
     e.preventDefault();
-    onGenerar(generarMonth);
+    onGenerar(generarMonth, generarDueDate);
     setShowGenerar(false);
     setGenerarMonth('');
+    setGenerarDueDate('');
   };
 
   return (
@@ -296,10 +298,14 @@ export default function MonthlyFees({ fees, rooms = [], onUpdateStatus, onUpdate
                   <label className="label-nodus">Mes</label>
                   <input type="text" className="input-nodus" placeholder="Ej: Mayo 2026" value={generarMonth} onChange={e => setGenerarMonth(e.target.value)} required />
                 </div>
+                <div className="col-md-6">
+                  <label className="label-nodus">Fecha de Vencimiento</label>
+                  <input type="date" className="input-nodus" value={generarDueDate} onChange={e => setGenerarDueDate(e.target.value)} />
+                </div>
               </div>
               <div className="d-flex gap-2">
                 <button type="submit" className="btn-nodus btn-primary-nodus">Generar</button>
-                <button type="button" className="btn-nodus btn-ghost" onClick={() => setShowGenerar(false)}>Cancelar</button>
+                <button type="button" className="btn-nodus btn-ghost" onClick={() => { setShowGenerar(false); setGenerarMonth(''); setGenerarDueDate(''); }}>Cancelar</button>
               </div>
             </form>
           </div>

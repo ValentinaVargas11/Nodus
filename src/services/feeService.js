@@ -25,8 +25,8 @@ export const crear = async (data) => {
   return response.data;
 };
 
-export const generar = async (month) => {
-  const { data: response } = await api.post('/fees/generar', { month });
+export const generar = async (month, dueDate) => {
+  const { data: response } = await api.post('/fees/generar', { month, dueDate });
   return response.data;
 };
 

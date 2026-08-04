@@ -160,9 +160,9 @@ function FeesSection() {
     } catch { toast.error('Error al crear cuota'); }
   };
 
-  const handleGenerar = async (month) => {
+  const handleGenerar = async (month, dueDate) => {
     try {
-      const generated = await feeService.generar(month);
+      const generated = await feeService.generar(month, dueDate);
       setFees([...fees, ...generated]);
       toast.success(`Generadas ${generated.length} cuotas`);
     } catch { toast.error('Error al generar cuotas'); }
