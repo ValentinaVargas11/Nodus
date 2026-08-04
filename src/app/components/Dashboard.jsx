@@ -108,8 +108,8 @@ export default function Dashboard({ stats }) {
             </div>
             <div className="card-body d-flex align-items-center justify-content-center">
               <ResponsiveContainer width="100%" height={220}>
-                <PieChart>
-                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={55} outerRadius={85}
+                <PieChart margin={{ top: 20, bottom: 20, left: 20, right: 20 }}>
+                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={72}
                     paddingAngle={3} dataKey="value"
                     label={({ name, value }) => `${name}: ${value}`} labelLine={false}>
                     {pieData.map((_, i) => <Cell key={i} fill={COLORS_PIE[i]} />)}

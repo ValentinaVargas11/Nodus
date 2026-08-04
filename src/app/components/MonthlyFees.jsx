@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Search, CheckCircle, Clock, AlertTriangle, DollarSign, Mail, Phone } from 'lucide-react';
 import { formatCurrency } from '../../utils/format';
+import ConfirmDialog from '../../components/ConfirmDialog';
 import styles from './MonthlyFees.module.css';
 
 const statusConfig = {
@@ -68,6 +69,7 @@ export default function MonthlyFees({ fees, rooms = [], onUpdateStatus, onUpdate
   const [generarMonth, setGenerarMonth] = useState('');
   const [generarDueDate, setGenerarDueDate] = useState('');
   const [editingFee, setEditingFee] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
   const [createForm, setCreateForm] = useState(emptyCreateForm);
 
   const filtered = fees.filter(fee =>
@@ -136,12 +138,15 @@ export default function MonthlyFees({ fees, rooms = [], onUpdateStatus, onUpdate
     setEditingFee(null);
   };
 
-  const handleDelete = () => {
-    if (window.confirm('¿Eliminar esta cuota?')) {
-      if (onDelete) onDelete(editingFee.id);
-    }
+  const requestDelete = () => setConfirmDelete(editingFee);
+
+  const confirmDeletion = () => {
+    if (onDelete && confirmDelete) onDelete(confirmDelete.id);
     setEditingFee(null);
+    setConfirmDelete(null);
   };
+
+  const cancelDeletion = () => setConfirmDelete(null);
 
   const handleGenerarSubmit = (e) => {
     e.preventDefault();
@@ -435,12 +440,23 @@ export default function MonthlyFees({ fees, rooms = [], onUpdateStatus, onUpdate
                     </div>
                   </form>
                   <div className="d-flex gap-2 mt-3">
-                    <button className="btn-nodus btn-danger-nodus btn-sm-nodus" onClick={handleDelete}>Eliminar</button>
+                    <button className="btn-nodus btn-danger-nodus btn-sm-nodus" onClick={requestDelete}>Eliminar</button>
                   </div>
                 </div>
               </div>
             </div>
           )}
+
+          <ConfirmDialog
+            isOpen={!!confirmDelete}
+            title="¿Eliminar cuota?"
+            message={`Esta acción no se puede deshacer. Se eliminará la cuota de la Unidad ${confirmDelete?.unitNumber} del período ${confirmDelete?.month}.`}
+            confirmText="Eliminar"
+            cancelText="Cancelar"
+            variant="danger"
+            onConfirm={confirmDeletion}
+            onCancel={cancelDeletion}
+          />
         </div>
       </div>
     </div>

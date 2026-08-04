@@ -185,7 +185,6 @@ function FeesSection() {
   };
 
   const handleEliminar = async (feeId) => {
-    if (!window.confirm('¿Eliminar esta cuota?')) return;
     try {
       await feeService.eliminar(feeId);
       setFees(fees.filter(f => f.id !== feeId));
