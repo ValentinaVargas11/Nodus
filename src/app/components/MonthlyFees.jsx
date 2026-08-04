@@ -35,15 +35,86 @@ const filterTabs = [
   { key: 'overdue', label: 'Vencidas'  },
 ];
 
-export default function MonthlyFees({ fees, onUpdateStatus }) {
+const toInputDate = (ddmmyyyy) => {
+  if (!ddmmyyyy) return '';
+  const m = String(ddmmyyyy).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+  return ddmmyyyy;
+};
+
+const fromInputDate = (value) => {
+  if (!value) return '';
+  const m = String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) return `${m[3]}/${m[2]}/${m[1]}`;
+  return value;
+};
+
+export default function MonthlyFees({ fees, onUpdateStatus, onUpdate, onUpdateDetalles, onDelete, onGenerar, onCrear }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [showForm, setShowForm] = useState(false);
+  const [showGenerar, setShowGenerar] = useState(false);
+  const [generarMonth, setGenerarMonth] = useState('');
+  const [editingFee, setEditingFee] = useState(null);
 
   const filtered = fees.filter(fee =>
     (fee.tenantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
      fee.unitNumber.toLowerCase().includes(searchTerm.toLowerCase())) &&
     (statusFilter === 'all' || fee.status === statusFilter)
   );
+
+  const startEdit = (fee) => setEditingFee(fee);
+
+  const cancelEdit = () => setEditingFee(null);
+
+  const handleCreateSubmit = (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const payload = {
+      unitNumber: fd.get('unitNumber'),
+      tenantName: fd.get('tenantName'),
+      month: fd.get('month'),
+      amount: parseFloat(fd.get('amount')),
+      extraCharges: parseFloat(fd.get('extraCharges')) || 0,
+      dueDate: fromInputDate(fd.get('dueDate')),
+      status: fd.get('status') || 'pending',
+    };
+    if (fd.get('paidDate')) payload.paidDate = fromInputDate(fd.get('paidDate'));
+    if (onCrear) onCrear(payload);
+    setShowForm(false);
+  };
+
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const updates = {
+      month: fd.get('month'),
+      amount: parseFloat(fd.get('amount')),
+      extraCharges: parseFloat(fd.get('extraCharges')) || 0,
+      dueDate: fromInputDate(fd.get('dueDate')),
+      status: fd.get('status'),
+    };
+    if (updates.status === 'paid' && fd.get('paidDate')) {
+      updates.paidDate = fromInputDate(fd.get('paidDate'));
+    }
+    if (onUpdateDetalles) onUpdateDetalles(editingFee.id, updates);
+    else if (onUpdate) onUpdate(editingFee.id, updates);
+    setEditingFee(null);
+  };
+
+  const handleDelete = () => {
+    if (window.confirm('¿Eliminar esta cuota?')) {
+      if (onDelete) onDelete(editingFee.id);
+    }
+    setEditingFee(null);
+  };
+
+  const handleGenerarSubmit = (e) => {
+    e.preventDefault();
+    onGenerar(generarMonth);
+    setShowGenerar(false);
+    setGenerarMonth('');
+  };
 
   return (
     <div>
@@ -73,14 +144,14 @@ export default function MonthlyFees({ fees, onUpdateStatus }) {
 
       <div className="card-nodus mb-3">
         <div className="card-body">
-          <div className="d-flex flex-column flex-md-row gap-3 align-items-md-center">
+          <div className="d-flex flex-column flex-md-row gap-3 align-items-md-center flex-wrap">
             <div className="input-with-icon flex-grow-1">
               <Search size={15} className="input-icon" />
               <input type="text" className="input-nodus"
                 placeholder="Buscar por inquilino o unidad…"
                 value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
             </div>
-            <div className="filter-tabs flex-shrink-0">
+            <div className="filter-tabs flex-shrink-0 d-flex flex-wrap gap-2">
               {filterTabs.map(tab => (
                 <button key={tab.key}
                   className={`filter-tab${statusFilter === tab.key ? ' active' : ''}`}
@@ -91,6 +162,12 @@ export default function MonthlyFees({ fees, onUpdateStatus }) {
                   </span>
                 </button>
               ))}
+              <button className="btn-nodus btn-primary-nodus" onClick={() => setShowForm(!showForm)}>
+                {showForm ? '✕' : '+'} Nueva Cuota
+              </button>
+              <button className="btn-nodus btn-outline-nodus" onClick={() => setShowGenerar(!showGenerar)}>
+                {showGenerar ? '✕' : '+'} Generar Cuotas
+              </button>
             </div>
           </div>
         </div>
@@ -159,6 +236,8 @@ export default function MonthlyFees({ fees, onUpdateStatus }) {
                         <button onClick={() => onUpdateStatus(fee.id, 'pending')}
                           className="btn-nodus btn-warning-nodus btn-sm-nodus">Marcar Pendiente</button>
                       )}
+                      <button onClick={() => startEdit(fee)}
+                        className="btn-nodus btn-ghost btn-sm-nodus ms-2">Editar</button>
                     </td>
                   </tr>
                 );
@@ -171,6 +250,132 @@ export default function MonthlyFees({ fees, onUpdateStatus }) {
               <Search size={40} className="empty-state-icon" />
               <p className={styles.emptyTitle}>Sin resultados</p>
               <p className={styles.emptyText}>No se encontraron cuotas con los filtros seleccionados</p>
+            </div>
+          )}
+
+          {showForm && (
+            <div className="card-nodus mt-3">
+              <div className="card-header-nodus">
+                <h3 className="card-header-title">Crear Nueva Cuota</h3>
+              </div>
+              <div className="card-body">
+                <form onSubmit={handleCreateSubmit} className="d-flex flex-column gap-3">
+                  <div className="row g-3">
+                    <div className="col-md-6">
+                      <label className="label-nodus">Unidad</label>
+                      <input type="text" name="unitNumber" className="input-nodus" placeholder="Ej: 1A" required />
+                    </div>
+                    <div className="col-md-6">
+                      <label className="label-nodus">Inquilino</label>
+                      <input type="text" name="tenantName" className="input-nodus" placeholder="Nombre del inquilino" required />
+                    </div>
+                    <div className="col-md-4">
+                      <label className="label-nodus">Período</label>
+                      <input type="text" name="month" className="input-nodus" placeholder="Ej: Mayo 2026" required />
+                    </div>
+                    <div className="col-md-4">
+                      <label className="label-nodus">Monto Base</label>
+                      <input type="number" name="amount" className="input-nodus" placeholder="Ej: 100000" required />
+                    </div>
+                    <div className="col-md-4">
+                      <label className="label-nodus">Cargos Extra</label>
+                      <input type="number" name="extraCharges" className="input-nodus" placeholder="Ej: 5000" defaultValue="0" />
+                    </div>
+                    <div className="col-md-4">
+                      <label className="label-nodus">Fecha Vencimiento</label>
+                      <input type="date" name="dueDate" className="input-nodus" required />
+                    </div>
+                    <div className="col-md-4">
+                      <label className="label-nodus">Estado</label>
+                      <select name="status" className="input-nodus select-nodus" defaultValue="pending">
+                        <option value="pending">Pendiente</option>
+                        <option value="paid">Pagada</option>
+                        <option value="overdue">Vencida</option>
+                      </select>
+                    </div>
+                    <div className="col-md-4">
+                      <label className="label-nodus">Fecha de Pago</label>
+                      <input type="date" name="paidDate" className="input-nodus" />
+                    </div>
+                  </div>
+                  <div className="d-flex gap-2">
+                    <button type="submit" className="btn-nodus btn-primary-nodus">Crear</button>
+                    <button type="button" className="btn-nodus btn-ghost" onClick={() => setShowForm(false)}>Cancelar</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {showGenerar && (
+            <div className="card-nodus mt-3">
+              <div className="card-header-nodus">
+                <h3 className="card-header-title">Generar Cuotas Mensuales</h3>
+              </div>
+              <div className="card-body">
+                <form onSubmit={handleGenerarSubmit} className="d-flex flex-column gap-3">
+                  <div className="row g-3">
+                    <div className="col-md-6">
+                      <label className="label-nodus">Mes</label>
+                      <input type="text" className="input-nodus" placeholder="Ej: Mayo 2026" value={generarMonth} onChange={e => setGenerarMonth(e.target.value)} required />
+                    </div>
+                  </div>
+                  <div className="d-flex gap-2">
+                    <button type="submit" className="btn-nodus btn-primary-nodus">Generar</button>
+                    <button type="button" className="btn-nodus btn-ghost" onClick={() => setShowGenerar(false)}>Cancelar</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {editingFee && (
+            <div className="modal-overlay" onClick={() => cancelEdit()}>
+              <div className="modal-box" onClick={e => e.stopPropagation()}>
+                <div className="modal-header">
+                  <h3 className="modal-title">Editar Cuota {editingFee.unitNumber}</h3>
+                  <button className="modal-close" onClick={() => cancelEdit()}>✕</button>
+                </div>
+                <div className="modal-body">
+                  <form onSubmit={handleEditSubmit} className="d-flex flex-column gap-3">
+                    <div>
+                      <label className="label-nodus">Período</label>
+                      <input type="text" name="month" className="input-nodus" defaultValue={editingFee.month} />
+                    </div>
+                    <div>
+                      <label className="label-nodus">Monto Base</label>
+                      <input type="number" name="amount" className="input-nodus" defaultValue={editingFee.amount} />
+                    </div>
+                    <div>
+                      <label className="label-nodus">Cargos Extra</label>
+                      <input type="number" name="extraCharges" className="input-nodus" defaultValue={editingFee.extraCharges} />
+                    </div>
+                    <div>
+                      <label className="label-nodus">Fecha Vencimiento</label>
+                      <input type="date" name="dueDate" className="input-nodus" defaultValue={toInputDate(editingFee.dueDate)} />
+                    </div>
+                    <div>
+                      <label className="label-nodus">Estado</label>
+                      <select name="status" className="input-nodus select-nodus" defaultValue={editingFee.status}>
+                        <option value="pending">Pendiente</option>
+                        <option value="paid">Pagada</option>
+                        <option value="overdue">Vencida</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="label-nodus">Fecha de Pago</label>
+                      <input type="date" name="paidDate" className="input-nodus" defaultValue={toInputDate(editingFee.paidDate)} />
+                    </div>
+                    <div className="d-flex gap-2">
+                      <button type="submit" className="btn-nodus btn-primary-nodus flex-fill">Guardar</button>
+                      <button type="button" className="btn-nodus btn-ghost flex-fill" onClick={() => cancelEdit()}>Cancelar</button>
+                    </div>
+                  </form>
+                  <div className="d-flex gap-2 mt-3">
+                    <button className="btn-nodus btn-danger-nodus btn-sm-nodus" onClick={handleDelete}>Eliminar</button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>

@@ -137,18 +137,62 @@ function FeesSection() {
 
   const handleUpdateStatus = async (id, status) => {
     try {
-      await feeService.cambiarEstado(id, status);
-      setFees(fees.map(f => f.id === id
-        ? { ...f, status, paidDate: status === 'paid' ? new Date().toLocaleDateString('es-AR') : undefined }
-        : f
-      ));
+      const updated = await feeService.cambiarEstado(id, status);
+      setFees(fees.map(f => f.id === id ? updated : f));
       toast.success('Cuota actualizada');
     } catch { toast.error('Error al actualizar cuota'); }
   };
 
+  const handleCrear = async (newFee) => {
+    try {
+      const created = await feeService.crear(newFee);
+      setFees([created, ...fees]);
+      toast.success('Cuota creada');
+    } catch { toast.error('Error al crear cuota'); }
+  };
+
+  const handleGenerar = async (month) => {
+    try {
+      const generated = await feeService.generar(month);
+      setFees([...fees, ...generated]);
+      toast.success(`Generadas ${generated.length} cuotas`);
+    } catch { toast.error('Error al generar cuotas'); }
+  };
+
+  const handleUpdate = async (feeId, updates) => {
+    try {
+      const updated = await feeService.actualizar(feeId, updates);
+      setFees(fees.map(f => f.id === feeId ? updated : f));
+      toast.success('Cuota actualizada');
+    } catch { toast.error('Error al actualizar cuota'); }
+  };
+
+  const handleUpdateDetalles = async (feeId, updates) => {
+    try {
+      const updated = await feeService.actualizarDetalles(feeId, updates);
+      setFees(fees.map(f => f.id === feeId ? updated : f));
+      toast.success('Cuota actualizada');
+    } catch { toast.error('Error al actualizar cuota'); }
+  };
+
+  const handleEliminar = async (feeId) => {
+    if (!window.confirm('¿Eliminar esta cuota?')) return;
+    try {
+      await feeService.eliminar(feeId);
+      setFees(fees.filter(f => f.id !== feeId));
+      toast.success('Cuota eliminada');
+    } catch { toast.error('Error al eliminar cuota'); }
+  };
+
   if (loading || !fees) return <div className="page-content"><div className="spinner" style={{ margin: '60px auto' }} /></div>;
 
-  return <MonthlyFees fees={fees} onUpdateStatus={handleUpdateStatus} />;
+  return <MonthlyFees fees={fees}
+    onUpdateStatus={handleUpdateStatus}
+    onUpdate={handleUpdate}
+    onUpdateDetalles={handleUpdateDetalles}
+    onDelete={handleEliminar}
+    onGenerar={handleGenerar}
+    onCrear={handleCrear} />;
 }
 
 function TasksSection() {
