@@ -441,6 +441,18 @@ body {
   background: #b45309;
 }
 
+.btn-danger-nodus {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+}
+.btn-danger-nodus:hover {
+  background: var(--danger-text);
+  border-color: var(--danger-text);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
 .btn-sm-nodus {
   padding: 5px 11px;
   font-size: 12.5px;

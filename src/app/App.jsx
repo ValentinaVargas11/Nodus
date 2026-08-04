@@ -134,21 +134,73 @@ function FeesSection() {
   const { data: fees, loading, setData: setFees } = useFetch(() =>
     feeService.listar().then(res => res.data)
   );
+  const { data: rooms, loading: roomsLoading } = useFetch(() =>
+    roomService.listar().then(res => res.data)
+  );
 
   const handleUpdateStatus = async (id, status) => {
     try {
-      await feeService.cambiarEstado(id, status);
-      setFees(fees.map(f => f.id === id
-        ? { ...f, status, paidDate: status === 'paid' ? new Date().toLocaleDateString('es-AR') : undefined }
-        : f
-      ));
+      const updated = await feeService.cambiarEstado(id, status);
+      setFees(fees.map(f => f.id === id ? updated : f));
       toast.success('Cuota actualizada');
     } catch { toast.error('Error al actualizar cuota'); }
   };
 
-  if (loading || !fees) return <div className="page-content"><div className="spinner" style={{ margin: '60px auto' }} /></div>;
+  const handleCrear = async (newFee) => {
+    try {
+      const created = await feeService.crear(newFee);
+      const room = rooms?.find(r => r.number === newFee.unitNumber);
+      const hydrated = {
+        ...created,
+        email: created.email || room?.email || '',
+        phone: created.phone || room?.phone || '',
+      };
+      setFees([hydrated, ...fees]);
+      toast.success('Cuota creada');
+    } catch { toast.error('Error al crear cuota'); }
+  };
 
-  return <MonthlyFees fees={fees} onUpdateStatus={handleUpdateStatus} />;
+  const handleGenerar = async (month, dueDate) => {
+    try {
+      const generated = await feeService.generar(month, dueDate);
+      setFees([...fees, ...generated]);
+      toast.success(`Generadas ${generated.length} cuotas`);
+    } catch { toast.error('Error al generar cuotas'); }
+  };
+
+  const handleUpdate = async (feeId, updates) => {
+    try {
+      const updated = await feeService.actualizar(feeId, updates);
+      setFees(fees.map(f => f.id === feeId ? updated : f));
+      toast.success('Cuota actualizada');
+    } catch { toast.error('Error al actualizar cuota'); }
+  };
+
+  const handleUpdateDetalles = async (feeId, updates) => {
+    try {
+      const updated = await feeService.actualizarDetalles(feeId, updates);
+      setFees(fees.map(f => f.id === feeId ? updated : f));
+      toast.success('Cuota actualizada');
+    } catch { toast.error('Error al actualizar cuota'); }
+  };
+
+  const handleEliminar = async (feeId) => {
+    try {
+      await feeService.eliminar(feeId);
+      setFees(fees.filter(f => f.id !== feeId));
+      toast.success('Cuota eliminada');
+    } catch { toast.error('Error al eliminar cuota'); }
+  };
+
+  if (loading || !fees || roomsLoading || !rooms) return <div className="page-content"><div className="spinner" style={{ margin: '60px auto' }} /></div>;
+
+  return <MonthlyFees fees={fees} rooms={rooms}
+    onUpdateStatus={handleUpdateStatus}
+    onUpdate={handleUpdate}
+    onUpdateDetalles={handleUpdateDetalles}
+    onDelete={handleEliminar}
+    onGenerar={handleGenerar}
+    onCrear={handleCrear} />;
 }
 
 function TasksSection() {
