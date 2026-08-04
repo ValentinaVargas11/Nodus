@@ -49,13 +49,25 @@ const fromInputDate = (value) => {
   return value;
 };
 
-export default function MonthlyFees({ fees, onUpdateStatus, onUpdate, onUpdateDetalles, onDelete, onGenerar, onCrear }) {
+const emptyCreateForm = {
+  unitNumber: '',
+  tenantName: '',
+  month: '',
+  amount: '',
+  extraCharges: 0,
+  dueDate: '',
+  status: 'pending',
+  paidDate: '',
+};
+
+export default function MonthlyFees({ fees, rooms = [], onUpdateStatus, onUpdate, onUpdateDetalles, onDelete, onGenerar, onCrear }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showForm, setShowForm] = useState(false);
   const [showGenerar, setShowGenerar] = useState(false);
   const [generarMonth, setGenerarMonth] = useState('');
   const [editingFee, setEditingFee] = useState(null);
+  const [createForm, setCreateForm] = useState(emptyCreateForm);
 
   const filtered = fees.filter(fee =>
     (fee.tenantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -63,25 +75,46 @@ export default function MonthlyFees({ fees, onUpdateStatus, onUpdate, onUpdateDe
     (statusFilter === 'all' || fee.status === statusFilter)
   );
 
+  const selectedRoom = rooms.find(r => r.number === createForm.unitNumber);
+  const tenantList = [...new Set(rooms.filter(r => r.guestName).map(r => r.guestName.trim()).filter(Boolean))];
+
   const startEdit = (fee) => setEditingFee(fee);
 
   const cancelEdit = () => setEditingFee(null);
 
+  const handleUnitChange = (e) => {
+    const unitNumber = e.target.value;
+    const room = rooms.find(r => r.number === unitNumber);
+    setCreateForm(f => ({
+      ...f,
+      unitNumber,
+      tenantName: room?.guestName || '',
+    }));
+  };
+
+  const handleCreateFormChange = (field) => (e) => {
+    setCreateForm(f => ({ ...f, [field]: e.target.value }));
+  };
+
   const handleCreateSubmit = (e) => {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
     const payload = {
-      unitNumber: fd.get('unitNumber'),
-      tenantName: fd.get('tenantName'),
-      month: fd.get('month'),
-      amount: parseFloat(fd.get('amount')),
-      extraCharges: parseFloat(fd.get('extraCharges')) || 0,
-      dueDate: fromInputDate(fd.get('dueDate')),
-      status: fd.get('status') || 'pending',
+      unitNumber: createForm.unitNumber,
+      tenantName: createForm.tenantName,
+      month: createForm.month,
+      amount: parseFloat(createForm.amount),
+      extraCharges: parseFloat(createForm.extraCharges) || 0,
+      dueDate: fromInputDate(createForm.dueDate),
+      status: createForm.status,
+      email: selectedRoom?.email || '',
+      phone: selectedRoom?.phone || '',
     };
-    if (fd.get('paidDate')) payload.paidDate = fromInputDate(fd.get('paidDate'));
+    if (createForm.status === 'paid' && createForm.paidDate) {
+      payload.paidDate = fromInputDate(createForm.paidDate);
+    }
     if (onCrear) onCrear(payload);
     setShowForm(false);
+    setCreateForm(emptyCreateForm);
   };
 
   const handleEditSubmit = (e) => {
@@ -162,16 +195,116 @@ export default function MonthlyFees({ fees, onUpdateStatus, onUpdate, onUpdateDe
                   </span>
                 </button>
               ))}
-              <button className="btn-nodus btn-primary-nodus" onClick={() => setShowForm(!showForm)}>
+              <button className="btn-nodus btn-primary-nodus" onClick={() => { setShowForm(!showForm); setShowGenerar(false); }}>
                 {showForm ? '✕' : '+'} Nueva Cuota
               </button>
-              <button className="btn-nodus btn-outline-nodus" onClick={() => setShowGenerar(!showGenerar)}>
+              <button className="btn-nodus btn-outline-nodus" onClick={() => { setShowGenerar(!showGenerar); setShowForm(false); }}>
                 {showGenerar ? '✕' : '+'} Generar Cuotas
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {showForm && (
+        <div className="card-nodus mb-3">
+          <div className="card-header-nodus">
+            <h3 className="card-header-title">Crear Nueva Cuota</h3>
+          </div>
+          <div className="card-body">
+            <form onSubmit={handleCreateSubmit} className="d-flex flex-column gap-3">
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <label className="label-nodus">Unidad</label>
+                  <select name="unitNumber" className="input-nodus select-nodus" value={createForm.unitNumber} onChange={handleUnitChange} required>
+                    <option value="">Seleccionar unidad…</option>
+                    {rooms.map(room => (
+                      <option key={room.id} value={room.number}>
+                        {room.number} — {room.type} ({room.status})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-md-6">
+                  <label className="label-nodus">Inquilino</label>
+                  {selectedRoom?.guestName ? (
+                    <input type="text" className="input-nodus" value={createForm.tenantName}
+                      onChange={handleCreateFormChange('tenantName')} required />
+                  ) : (
+                    <select name="tenantName" className="input-nodus select-nodus" value={createForm.tenantName}
+                      onChange={handleCreateFormChange('tenantName')}>
+                      <option value="">Seleccionar inquilino…</option>
+                      {tenantList.map(name => (
+                        <option key={name} value={name}>{name}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+                <div className="col-md-4">
+                  <label className="label-nodus">Período</label>
+                  <input type="text" name="month" className="input-nodus" placeholder="Ej: Mayo 2026"
+                    value={createForm.month} onChange={handleCreateFormChange('month')} required />
+                </div>
+                <div className="col-md-4">
+                  <label className="label-nodus">Monto Base</label>
+                  <input type="number" name="amount" className="input-nodus" placeholder="Ej: 100000"
+                    value={createForm.amount} onChange={handleCreateFormChange('amount')} required />
+                </div>
+                <div className="col-md-4">
+                  <label className="label-nodus">Cargos Extra</label>
+                  <input type="number" name="extraCharges" className="input-nodus" placeholder="Ej: 5000"
+                    value={createForm.extraCharges} onChange={handleCreateFormChange('extraCharges')} />
+                </div>
+                <div className="col-md-4">
+                  <label className="label-nodus">Fecha Vencimiento</label>
+                  <input type="date" name="dueDate" className="input-nodus"
+                    value={createForm.dueDate} onChange={handleCreateFormChange('dueDate')} required />
+                </div>
+                <div className="col-md-4">
+                  <label className="label-nodus">Estado</label>
+                  <select name="status" className="input-nodus select-nodus" value={createForm.status}
+                    onChange={handleCreateFormChange('status')}>
+                    <option value="pending">Pendiente</option>
+                    <option value="paid">Pagada</option>
+                    <option value="overdue">Vencida</option>
+                  </select>
+                </div>
+                <div className="col-md-4">
+                  <label className="label-nodus">Fecha de Pago</label>
+                  <input type="date" name="paidDate" className="input-nodus"
+                    value={createForm.paidDate} onChange={handleCreateFormChange('paidDate')} />
+                </div>
+              </div>
+              <div className="d-flex gap-2">
+                <button type="submit" className="btn-nodus btn-primary-nodus">Crear</button>
+                <button type="button" className="btn-nodus btn-ghost" onClick={() => { setShowForm(false); setCreateForm(emptyCreateForm); }}>Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showGenerar && (
+        <div className="card-nodus mb-3">
+          <div className="card-header-nodus">
+            <h3 className="card-header-title">Generar Cuotas Mensuales</h3>
+          </div>
+          <div className="card-body">
+            <form onSubmit={handleGenerarSubmit} className="d-flex flex-column gap-3">
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <label className="label-nodus">Mes</label>
+                  <input type="text" className="input-nodus" placeholder="Ej: Mayo 2026" value={generarMonth} onChange={e => setGenerarMonth(e.target.value)} required />
+                </div>
+              </div>
+              <div className="d-flex gap-2">
+                <button type="submit" className="btn-nodus btn-primary-nodus">Generar</button>
+                <button type="button" className="btn-nodus btn-ghost" onClick={() => setShowGenerar(false)}>Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <div className="card-nodus">
         <div className={styles.tableScroll}>
@@ -250,82 +383,6 @@ export default function MonthlyFees({ fees, onUpdateStatus, onUpdate, onUpdateDe
               <Search size={40} className="empty-state-icon" />
               <p className={styles.emptyTitle}>Sin resultados</p>
               <p className={styles.emptyText}>No se encontraron cuotas con los filtros seleccionados</p>
-            </div>
-          )}
-
-          {showForm && (
-            <div className="card-nodus mt-3">
-              <div className="card-header-nodus">
-                <h3 className="card-header-title">Crear Nueva Cuota</h3>
-              </div>
-              <div className="card-body">
-                <form onSubmit={handleCreateSubmit} className="d-flex flex-column gap-3">
-                  <div className="row g-3">
-                    <div className="col-md-6">
-                      <label className="label-nodus">Unidad</label>
-                      <input type="text" name="unitNumber" className="input-nodus" placeholder="Ej: 1A" required />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="label-nodus">Inquilino</label>
-                      <input type="text" name="tenantName" className="input-nodus" placeholder="Nombre del inquilino" required />
-                    </div>
-                    <div className="col-md-4">
-                      <label className="label-nodus">Período</label>
-                      <input type="text" name="month" className="input-nodus" placeholder="Ej: Mayo 2026" required />
-                    </div>
-                    <div className="col-md-4">
-                      <label className="label-nodus">Monto Base</label>
-                      <input type="number" name="amount" className="input-nodus" placeholder="Ej: 100000" required />
-                    </div>
-                    <div className="col-md-4">
-                      <label className="label-nodus">Cargos Extra</label>
-                      <input type="number" name="extraCharges" className="input-nodus" placeholder="Ej: 5000" defaultValue="0" />
-                    </div>
-                    <div className="col-md-4">
-                      <label className="label-nodus">Fecha Vencimiento</label>
-                      <input type="date" name="dueDate" className="input-nodus" required />
-                    </div>
-                    <div className="col-md-4">
-                      <label className="label-nodus">Estado</label>
-                      <select name="status" className="input-nodus select-nodus" defaultValue="pending">
-                        <option value="pending">Pendiente</option>
-                        <option value="paid">Pagada</option>
-                        <option value="overdue">Vencida</option>
-                      </select>
-                    </div>
-                    <div className="col-md-4">
-                      <label className="label-nodus">Fecha de Pago</label>
-                      <input type="date" name="paidDate" className="input-nodus" />
-                    </div>
-                  </div>
-                  <div className="d-flex gap-2">
-                    <button type="submit" className="btn-nodus btn-primary-nodus">Crear</button>
-                    <button type="button" className="btn-nodus btn-ghost" onClick={() => setShowForm(false)}>Cancelar</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
-
-          {showGenerar && (
-            <div className="card-nodus mt-3">
-              <div className="card-header-nodus">
-                <h3 className="card-header-title">Generar Cuotas Mensuales</h3>
-              </div>
-              <div className="card-body">
-                <form onSubmit={handleGenerarSubmit} className="d-flex flex-column gap-3">
-                  <div className="row g-3">
-                    <div className="col-md-6">
-                      <label className="label-nodus">Mes</label>
-                      <input type="text" className="input-nodus" placeholder="Ej: Mayo 2026" value={generarMonth} onChange={e => setGenerarMonth(e.target.value)} required />
-                    </div>
-                  </div>
-                  <div className="d-flex gap-2">
-                    <button type="submit" className="btn-nodus btn-primary-nodus">Generar</button>
-                    <button type="button" className="btn-nodus btn-ghost" onClick={() => setShowGenerar(false)}>Cancelar</button>
-                  </div>
-                </form>
-              </div>
             </div>
           )}
 

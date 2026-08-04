@@ -134,6 +134,9 @@ function FeesSection() {
   const { data: fees, loading, setData: setFees } = useFetch(() =>
     feeService.listar().then(res => res.data)
   );
+  const { data: rooms, loading: roomsLoading } = useFetch(() =>
+    roomService.listar().then(res => res.data)
+  );
 
   const handleUpdateStatus = async (id, status) => {
     try {
@@ -146,7 +149,13 @@ function FeesSection() {
   const handleCrear = async (newFee) => {
     try {
       const created = await feeService.crear(newFee);
-      setFees([created, ...fees]);
+      const room = rooms?.find(r => r.number === newFee.unitNumber);
+      const hydrated = {
+        ...created,
+        email: created.email || room?.email || '',
+        phone: created.phone || room?.phone || '',
+      };
+      setFees([hydrated, ...fees]);
       toast.success('Cuota creada');
     } catch { toast.error('Error al crear cuota'); }
   };
@@ -184,9 +193,9 @@ function FeesSection() {
     } catch { toast.error('Error al eliminar cuota'); }
   };
 
-  if (loading || !fees) return <div className="page-content"><div className="spinner" style={{ margin: '60px auto' }} /></div>;
+  if (loading || !fees || roomsLoading || !rooms) return <div className="page-content"><div className="spinner" style={{ margin: '60px auto' }} /></div>;
 
-  return <MonthlyFees fees={fees}
+  return <MonthlyFees fees={fees} rooms={rooms}
     onUpdateStatus={handleUpdateStatus}
     onUpdate={handleUpdate}
     onUpdateDetalles={handleUpdateDetalles}
