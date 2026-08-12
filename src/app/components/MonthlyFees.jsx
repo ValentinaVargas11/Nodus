@@ -373,15 +373,17 @@ export default function MonthlyFees({ fees, rooms = [], onUpdateStatus, onUpdate
                       </span>
                     </td>
                     <td>
-                      {fee.status !== 'paid' ? (
-                        <button onClick={() => onUpdateStatus(fee.id, 'paid')}
-                          className="btn-nodus btn-success-nodus btn-sm-nodus">Marcar Pagada</button>
-                      ) : (
-                        <button onClick={() => onUpdateStatus(fee.id, 'pending')}
-                          className="btn-nodus btn-warning-nodus btn-sm-nodus">Marcar Pendiente</button>
-                      )}
-                      <button onClick={() => startEdit(fee)}
-                        className="btn-nodus btn-ghost btn-sm-nodus ms-2">Editar</button>
+                      <div className="d-flex flex-column flex-sm-row gap-2">
+                        {fee.status !== 'paid' ? (
+                          <button onClick={() => onUpdateStatus(fee.id, 'paid')}
+                            className="btn-nodus btn-success-nodus btn-sm-nodus">Marcar Pagada</button>
+                        ) : (
+                          <button onClick={() => onUpdateStatus(fee.id, 'pending')}
+                            className="btn-nodus btn-warning-nodus btn-sm-nodus">Marcar Pendiente</button>
+                        )}
+                        <button onClick={() => startEdit(fee)}
+                          className="btn-nodus btn-ghost btn-sm-nodus">Editar</button>
+                      </div>
                     </td>
                   </tr>
                 );

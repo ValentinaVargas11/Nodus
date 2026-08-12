@@ -67,6 +67,13 @@
   width: 120px;
 }
 
+@media (max-width: 768px) {
+  .progressSmall {
+    width: 100%;
+    max-width: 120px;
+  }
+}
+
 .quantityDisplay {
   min-width: 44px;
   text-align: center;

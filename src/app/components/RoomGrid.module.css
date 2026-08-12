@@ -21,12 +21,12 @@
 }
 
 .tenantSince {
-  font-size: 10.5px;
+  font-size: 12px;
   color: var(--text-muted);
   margin-top: 2px;
 }
 
 .guestCount {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-secondary);
 }
