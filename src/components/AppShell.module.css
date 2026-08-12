@@ -1,6 +1,7 @@
 .logoImg {
-  height: 58px;
+  height: 40px;
   width: auto;
+  display: block;
   mix-blend-mode: screen;
   flex-shrink: 0;
 }
