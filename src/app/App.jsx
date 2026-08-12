@@ -34,7 +34,7 @@ export default function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
           <Route path="/" element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
-            <Route index element={<Navigate to="/unidades" replace />} />
+            <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard"
               element={<ProtectedRoute allowedRoles={['Administrador General', 'Backoffice', 'Encargada de Edificio', 'Encargado de Edificio']}>
                 <DashboardSection />
@@ -56,7 +56,7 @@ export default function App() {
                 <InventorySection />
               </ProtectedRoute>} />
           </Route>
-          <Route path="*" element={<Navigate to="/unidades" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

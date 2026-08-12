@@ -15,7 +15,7 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user = await login(email, password);
-    if (user) navigate('/unidades');
+    if (user) navigate('/dashboard');
   };
 
   return (
