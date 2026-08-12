@@ -112,3 +112,8 @@
 .menuBtnLabelDanger { color: inherit; }
 
 .menuBtnSublabel { font-size: 11.5px; color: #8a98ae; }
+
+@media (max-width: 768px) {
+  .userInfo { display: none; }
+  .triggerBtn { padding: 4px; }
+}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { LOGO_FULL } from '../app/logos';
 import { useAuth } from '../context/AuthContext';
@@ -70,6 +70,12 @@ export default function LoginPage() {
               {loading ? 'Ingresando…' : 'Ingresar'}
             </button>
           </form>
+
+          <div className={styles.forgotRow}>
+            <Link to="/forgot-password" className={styles.forgotLink}>
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </div>
         </div>
 
         <p className={styles.footer}>© 2026 Nodus · Sistema de gestión</p>

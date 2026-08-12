@@ -5,6 +5,8 @@ import { AuthProvider } from '../context/AuthContext';
 import ProtectedRoute from '../components/ProtectedRoute';
 import AppShell from '../components/AppShell';
 import LoginPage from '../pages/LoginPage';
+import ForgotPasswordPage from '../pages/ForgotPasswordPage';
+import ResetPasswordPage from '../pages/ResetPasswordPage';
 import Dashboard from './components/Dashboard';
 import RoomGrid from './components/RoomGrid';
 import RoomDetailModal from './components/RoomDetailModal';
@@ -29,6 +31,8 @@ export default function App() {
         <Toaster position="top-right" toastOptions={{ duration: 3000, style: TOAST_STYLE }} />
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
           <Route path="/" element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
             <Route index element={<Navigate to="/unidades" replace />} />
             <Route path="dashboard"

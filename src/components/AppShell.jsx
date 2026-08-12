@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import {
   Building2, DollarSign, Wrench, Package,
@@ -28,8 +28,23 @@ const PAGE_TITLES = {
 
 export default function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { user, logout } = useAuth();
   const location = useLocation();
+
+  useEffect(() => {
+    if (!mobileOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setMobileOpen(false); };
+    document.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [mobileOpen]);
+
+  const closeMobile = () => setMobileOpen(false);
 
   const pageTitle = PAGE_TITLES[location.pathname] || 'Nodus';
 
@@ -37,7 +52,7 @@ export default function AppShell() {
 
   return (
     <div className="app-shell">
-      <aside className={`sidebar${sidebarOpen ? '' : ' collapsed'}`}>
+      <aside className={`sidebar${sidebarOpen ? '' : ' collapsed'}${mobileOpen ? ' open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-brand">
             <img
@@ -68,6 +83,7 @@ export default function AppShell() {
                   `nav-item${isActive ? ' active' : ''}`
                 }
                 title={!sidebarOpen ? tab.label : undefined}
+                onClick={closeMobile}
               >
                 <Icon className="nav-item-icon" size={17} />
                 <span className="nav-item-label">{tab.label}</span>
@@ -81,9 +97,21 @@ export default function AppShell() {
         </div>
       </aside>
 
+      {mobileOpen && (
+        <div className="sidebar-backdrop" onClick={closeMobile} aria-hidden="true" />
+      )}
+
       <div className="app-main">
         <header className="navbar-nodus">
           <div className="navbar-breadcrumb">
+            <button
+              className="navbar-menu-btn"
+              onClick={() => setMobileOpen(true)}
+              title="Abrir menú"
+              aria-label="Abrir menú"
+            >
+              <Menu size={18} />
+            </button>
             <span className="navbar-page-title">{pageTitle}</span>
           </div>
 
