@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { User, Mail, Briefcase, ChevronDown, LogOut, Settings, Shield } from 'lucide-react';
+import { User, Mail, Briefcase, ChevronDown, LogOut, Shield } from 'lucide-react';
 import styles from './UserMenu.module.css';
 
 function getInitials(nombre, apellido) {
@@ -65,8 +65,6 @@ export default function UserMenu({ user, onLogout }) {
           </div>
 
           <div className={styles.actionsSection}>
-            <MenuAction icon={<Settings size={15} />} label="Configuración de cuenta" sublabel="Preferencias y seguridad" onClick={() => setOpen(false)} />
-            <div className={styles.divider} />
             <MenuAction icon={<LogOut size={15} />} label="Cerrar sesión" sublabel={`Sesión de ${user.nombre}`} onClick={() => { setOpen(false); onLogout(); }} danger />
           </div>
         </div>

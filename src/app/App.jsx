@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from '../context/AuthContext';
+import { AuthProvider, useAuth } from '../context/AuthContext';
+import { getHomePath } from './navigation';
 import ProtectedRoute from '../components/ProtectedRoute';
 import AppShell from '../components/AppShell';
 import LoginPage from '../pages/LoginPage';
@@ -34,7 +35,7 @@ export default function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
           <Route path="/" element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route index element={<HomeRedirect />} />
             <Route path="dashboard"
               element={<ProtectedRoute allowedRoles={['Administrador General', 'Backoffice', 'Encargada de Edificio', 'Encargado de Edificio']}>
                 <DashboardSection />
@@ -56,11 +57,17 @@ export default function App() {
                 <InventorySection />
               </ProtectedRoute>} />
           </Route>
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<HomeRedirect />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
   );
+}
+
+function HomeRedirect() {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return <Navigate to={getHomePath(user?.cargo)} replace />;
 }
 
 function useFetch(fetchFn, deps = []) {

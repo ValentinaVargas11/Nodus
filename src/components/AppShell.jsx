@@ -1,22 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
-import {
-  Building2, DollarSign, Wrench, Package,
-  LayoutDashboard, Menu, ChevronLeft, Bell, Search,
-} from 'lucide-react';
+import { Menu, ChevronLeft } from 'lucide-react';
 import UserMenu from '../app/components/UserMenu';
 import { LOGO_ICON } from '../app/logos';
+import { getAllowedNavItems } from '../app/navigation';
 import { useAuth } from '../context/AuthContext';
 import '../styles/nodus.css';
 import shellStyles from './AppShell.module.css';
-
-const TABS = [
-  { id: 'dashboard',   path: '/dashboard',  label: 'Dashboard',        icon: LayoutDashboard },
-  { id: 'units',       path: '/unidades',     label: 'Unidades',        icon: Building2       },
-  { id: 'fees',        path: '/cuotas',       label: 'Cuotas/Expensas', icon: DollarSign      },
-  { id: 'maintenance', path: '/reparaciones', label: 'Reparaciones',    icon: Wrench          },
-  { id: 'inventory',   path: '/inventario',   label: 'Inventario',      icon: Package         },
-];
 
 const PAGE_TITLES = {
   '/dashboard':    'Dashboard',
@@ -50,6 +40,8 @@ export default function AppShell() {
 
   const initials = `${user?.nombre?.[0] ?? ''}${user?.apellido?.[0] ?? ''}`.toUpperCase();
 
+  const navItems = getAllowedNavItems(user?.cargo);
+
   return (
     <div className="app-shell">
       <aside className={`sidebar${sidebarOpen ? '' : ' collapsed'}${mobileOpen ? ' open' : ''}`}>
@@ -73,7 +65,7 @@ export default function AppShell() {
 
         <nav className="sidebar-nav">
           <div className="sidebar-section-label">Principal</div>
-          {TABS.map(tab => {
+          {navItems.map(tab => {
             const Icon = tab.icon;
             return (
               <NavLink
@@ -116,17 +108,6 @@ export default function AppShell() {
           </div>
 
           <div className="navbar-actions">
-            <button className="navbar-icon-btn" title="Buscar">
-              <Search size={16} />
-            </button>
-
-            <button className={`navbar-icon-btn ${shellStyles.notifBtn}`} title="Notificaciones">
-              <Bell size={16} />
-              <span className="notif-dot" />
-            </button>
-
-            <div className="navbar-divider" />
-
             <UserMenu user={user} onLogout={logout} />
           </div>
         </header>
