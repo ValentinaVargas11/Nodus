@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { LOGO_FULL } from '../app/logos';
+import { getHomePath } from '../app/navigation';
 import { useAuth } from '../context/AuthContext';
 import styles from './LoginPage.module.css';
 
@@ -15,7 +16,7 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user = await login(email, password);
-    if (user) navigate('/dashboard');
+    if (user) navigate(getHomePath(user.cargo));
   };
 
   return (

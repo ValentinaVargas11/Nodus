@@ -871,45 +871,6 @@ body {
   gap: 4px;
 }
 
-.navbar-icon-btn {
-  position: relative;
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: none;
-  border: 1px solid transparent;
-  color: #4b5a72;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 140ms ease;
-}
-
-.navbar-icon-btn:hover {
-  background: #f0f3f8;
-  border-color: #e2e8f0;
-  color: #0d1829;
-}
-
-.notif-dot {
-  position: absolute;
-  top: 7px;
-  right: 7px;
-  width: 7px;
-  height: 7px;
-  background: #EF4444;
-  border-radius: 50%;
-  border: 1.5px solid white;
-}
-
-.navbar-divider {
-  width: 1px;
-  height: 20px;
-  background: #e2e8f0;
-  margin: 0 4px;
-}
-
 /* ── Sidebar v3 ─────────────────────────────────────────────── */
 .sidebar {
   width: 240px;
