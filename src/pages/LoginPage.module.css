@@ -25,9 +25,10 @@
 .logoWrapper { text-align: center; }
 
 .logo {
-  width: clamp(320px, 35vw, 320px); max-width: 90%;
+  width: clamp(230px, 35vw, 320px); height: auto; max-width: 90%;
   display: block; margin: 0 auto;
-  mix-blend-mode: screen;
+  background-color: transparent !important;
+  mix-blend-mode: normal;
 }
 
 .card {
