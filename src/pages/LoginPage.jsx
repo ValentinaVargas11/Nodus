@@ -13,9 +13,23 @@ export default function LoginPage() {
   const { login, loading, error } = useAuth();
   const navigate = useNavigate();
 
+  const quickLogins = [
+    { label: 'Admin', email: 'admin@nodus.com', password: 'admin123', roleClass: styles.chipAdmin },
+    { label: 'Encargada', email: 'encargado@nodus.com', password: 'encar123', roleClass: styles.chipEncargada },
+    { label: 'Backoffice', email: 'backoffice@nodus.com', password: 'back123', roleClass: styles.chipBackoffice },
+    { label: 'Limpieza', email: 'limpieza@nodus.com', password: 'limp123', roleClass: styles.chipLimpieza },
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user = await login(email, password);
+    if (user) navigate(getHomePath(user.cargo));
+  };
+
+  const handleQuickLogin = async (creds) => {
+    setEmail(creds.email);
+    setPassword(creds.password);
+    const user = await login(creds.email, creds.password);
     if (user) navigate(getHomePath(user.cargo));
   };
 
@@ -71,12 +85,29 @@ export default function LoginPage() {
               {loading ? 'Ingresando…' : 'Ingresar'}
             </button>
           </form>
-
-          <div className={styles.forgotRow}>
+            <div className={styles.forgotRow}>
             <Link to="/forgot-password" className={styles.forgotLink}>
               ¿Olvidaste tu contraseña?
             </Link>
           </div>
+          <div className={styles.quickAccess}>
+            <div className={styles.quickDivider}>Ingreso Rápido Demo</div>
+            <div className={styles.quickGrid}>
+              {quickLogins.map((q) => (
+                <button
+                  key={q.label}
+                  type="button"
+                  disabled={loading}
+                  onClick={() => handleQuickLogin(q)}
+                  className={`${styles.chip} ${q.roleClass}`}
+                >
+                  {q.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          
         </div>
 
         <p className={styles.footer}>© 2026 Nodus · Sistema de gestión</p>
