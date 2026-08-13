@@ -87,6 +87,38 @@
 
 .submitBtn:disabled { background: #9aa0b2; cursor: not-allowed; box-shadow: none; }
 
+.quickAccess { margin-top: 22px; }
+
+.quickDivider {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11.5px; font-weight: 700; color: #8a98ae;
+  letter-spacing: 0.4px; text-transform: uppercase;
+}
+.quickDivider::before, .quickDivider::after {
+  content: ''; flex: 1; height: 1px; background: #E2E8F0;
+}
+
+.quickGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 14px; }
+
+.chip {
+  padding: 9px 10px; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer;
+  text-align: center; transition: all 140ms ease;
+}
+.chip:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.chipAdmin { background: #e6ecf8; color: #2f477b; border-color: #b8c7e4; }
+.chipAdmin:hover { background: #2f477b; color: #fff; }
+
+.chipEncargada { background: #f3e8ff; color: #6d28d9; border-color: #d8b4fe; }
+.chipEncargada:hover { background: #6d28d9; color: #fff; }
+
+.chipBackoffice { background: #e0f2f1; color: #00695c; border-color: #b2dfdb; }
+.chipBackoffice:hover { background: #00695c; color: #fff; }
+
+.chipLimpieza { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+.chipLimpieza:hover { background: #047857; color: #fff; }
+
 .forgotRow { text-align: center; margin-top: 16px; }
 
 .forgotLink {
